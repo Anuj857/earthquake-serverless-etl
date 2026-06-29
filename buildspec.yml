@@ -5,31 +5,35 @@ phases:
     runtime-versions:
       python: 3.12
 
-    commands:
-      - echo "Installing dependencies..."
-
   pre_build:
     commands:
       - echo "Running syntax validation..."
-
       - python -m py_compile lambda/fetch_lambda/lambda_function.py
       - python -m py_compile lambda/etl_lambda/lambda_function.py
 
   build:
     commands:
-      - echo "Packaging Fetch Lambda..."
-      - mkdir -p build/fetch_lambda
-      - cp lambda/fetch_lambda/lambda_function.py build/fetch_lambda/
+      - echo "Creating deployment packages..."
 
-      - echo "Packaging ETL Lambda..."
-      - mkdir -p build/etl_lambda
-      - cp lambda/etl_lambda/lambda_function.py build/etl_lambda/
+      - cd lambda/fetch_lambda
+      - zip -r ../../fetch_lambda.zip .
+      - cd ../..
+
+      - cd lambda/etl_lambda
+      - zip -r ../../etl_lambda.zip .
+      - cd ../..
 
   post_build:
     commands:
-      - echo "Build completed successfully."
+      - echo "Deploying Fetch Lambda..."
+      - aws lambda update-function-code --function-name earthquake-fetch-lambda --zip-file fileb://fetch_lambda.zip
+
+      - echo "Deploying ETL Lambda..."
+      - aws lambda update-function-code --function-name earthquake-etl-lambda --zip-file fileb://etl_lambda.zip
+
+      - echo "Deployment completed."
 
 artifacts:
   files:
-    - '**/*'
-  base-directory: build
+    - fetch_lambda.zip
+    - etl_lambda.zip
