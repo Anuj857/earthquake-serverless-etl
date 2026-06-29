@@ -1,0 +1,51 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-project:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install Project Dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Validate Fetch Lambda
+        run: |
+          python -m py_compile lambda/fetch_lambda/lambda_function.py
+
+      - name: Validate ETL Lambda
+        run: |
+          python -m py_compile lambda/etl_lambda/lambda_function.py
+
+      - name: Validate Project Structure
+        run: |
+          test -d lambda
+          test -f README.md
+          test -f buildspec.yml
+
+      - name: CI Passed
+        run: echo "All validations completed successfully."
