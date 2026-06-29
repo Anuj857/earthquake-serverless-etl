@@ -41,6 +41,9 @@ phases:
       - echo "Deploying Fetch Lambda..."
       - aws lambda update-function-code --function-name earthquake-fetch-lambda --zip-file fileb://deployment/fetch_lambda.zip
 
+      - echo "Deploying ETL Lambda..."
+      - aws lambda update-function-code --function-name earthquake-etl-lambda --zip-file fileb://deployment/etl_lambda.zip
+
 
   post_build:
     commands:
