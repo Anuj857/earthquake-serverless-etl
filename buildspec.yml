@@ -1,37 +1,3 @@
-# version: 0.2
-
-# phases:
-#   install:
-#     runtime-versions:
-#       python: 3.12
-
-#   pre_build:
-#     commands:
-#       - echo "========================================"
-#       - echo "Running Syntax Validation"
-#       - echo "========================================"
-
-#       - python -m py_compile lambda/fetch_lambda/lambda_function.py
-#       - python -m py_compile lambda/etl_lambda/lambda_function.py
-
-#   build:
-#     commands:
-#       - echo "========================================"
-#       - echo "Starting Deployment"
-#       - echo "========================================"
-
-#       - python scripts/deploy.py
-
-#   post_build:
-#     commands:
-#       - echo "========================================"
-#       - echo "Build & Deployment Completed"
-#       - echo "========================================"
-
-# artifacts:
-#   files:
-#     - '**/*'
-
 version: 0.2
 
 phases:
@@ -41,20 +7,35 @@ phases:
 
   pre_build:
     commands:
-      - echo "Running syntax validation..."
+      - echo "==================================="
+      - echo "Running Syntax Validation"
+      - echo "==================================="
+
       - python -m py_compile lambda/fetch_lambda/lambda_function.py
       - python -m py_compile lambda/etl_lambda/lambda_function.py
 
   build:
     commands:
-      - echo "Starting deployment..."
-      - chmod +x scripts/deploy.sh
-      - ./scripts/deploy.sh
+      - echo "==================================="
+      - echo "Creating Deployment Packages"
+      - echo "==================================="
+
+      - mkdir deployment
+
+      - cd lambda/fetch_lambda
+      - zip -r ../../deployment/fetch_lambda.zip .
+      - cd ../..
+
+      - cd lambda/etl_lambda
+      - zip -r ../../deployment/etl_lambda.zip .
+      - cd ../..
+
+      - ls -lh deployment
 
   post_build:
     commands:
-      - echo "Build completed successfully."
+      - echo "Packaging completed successfully."
 
 artifacts:
   files:
-    - '**/*'
+    - deployment/*
