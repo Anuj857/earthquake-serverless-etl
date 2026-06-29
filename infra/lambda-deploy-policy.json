@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "UpdateFetchLambda",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode",
+        "lambda:GetFunction"
+      ],
+      "Resource": "arn:aws:lambda:ap-south-1:737695751113:function:earthquake-fetch-lambda"
+    },
+    {
+      "Sid": "UpdateETLLambda",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode",
+        "lambda:GetFunction"
+      ],
+      "Resource": "arn:aws:lambda:ap-south-1:737695751113:function:earthquake-etl-lambda"
+    }
+  ]
+}

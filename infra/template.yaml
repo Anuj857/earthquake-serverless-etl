@@ -1,0 +1,54 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+
+  pre_build:
+    commands:
+      - echo "==================================="
+      - echo "Running Syntax Validation"
+      - echo "==================================="
+
+      - python -m py_compile lambda/fetch_lambda/lambda_function.py
+      - python -m py_compile lambda/etl_lambda/lambda_function.py
+
+  build:
+    commands:
+      - echo "==================================="
+      - echo "Creating Deployment Packages"
+      - echo "==================================="
+
+      - mkdir deployment
+
+      - cd lambda/fetch_lambda
+      - zip -r ../../deployment/fetch_lambda.zip .
+      - cd ../..
+
+      - cd lambda/etl_lambda
+      - zip -r ../../deployment/etl_lambda.zip .
+      - cd ../..
+
+      - ls -lh deployment
+
+      - echo "Checking AWS CLI..."
+      - aws --version
+
+      - echo "Checking AWS Identity..."
+      - aws sts get-caller-identity
+      - echo "Deploying Fetch Lambda..."
+      - aws lambda update-function-code --function-name earthquake-fetch-lambda --zip-file fileb://deployment/fetch_lambda.zip
+
+      - echo "Deploying ETL Lambda..."
+      - aws lambda update-function-code --function-name earthquake-etl-lambda --zip-file fileb://deployment/etl_lambda.zip
+
+
+
+  post_build:
+    commands:
+      - echo "Packaging completed successfully."
+
+artifacts:
+  files:
+    - deployment/*
