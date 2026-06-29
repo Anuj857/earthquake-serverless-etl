@@ -1,0 +1,35 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+
+    commands:
+      - echo "Installing dependencies..."
+
+  pre_build:
+    commands:
+      - echo "Running syntax validation..."
+
+      - python -m py_compile lambda/fetch_lambda/lambda_function.py
+      - python -m py_compile lambda/etl_lambda/lambda_function.py
+
+  build:
+    commands:
+      - echo "Packaging Fetch Lambda..."
+      - mkdir -p build/fetch_lambda
+      - cp lambda/fetch_lambda/lambda_function.py build/fetch_lambda/
+
+      - echo "Packaging ETL Lambda..."
+      - mkdir -p build/etl_lambda
+      - cp lambda/etl_lambda/lambda_function.py build/etl_lambda/
+
+  post_build:
+    commands:
+      - echo "Build completed successfully."
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build
