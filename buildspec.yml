@@ -38,6 +38,12 @@ phases:
       - echo "Checking AWS Identity..."
       - aws sts get-caller-identity
 
+      - echo "Deploying Fetch Lambda..."
+      - aws lambda update-function-code \
+          --function-name earthquake-fetch-lambda \
+          --zip-file fileb://deployment/fetch_lambda.zip
+
+
   post_build:
     commands:
       - echo "Packaging completed successfully."
