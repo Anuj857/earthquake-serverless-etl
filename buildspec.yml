@@ -1,3 +1,37 @@
+# version: 0.2
+
+# phases:
+#   install:
+#     runtime-versions:
+#       python: 3.12
+
+#   pre_build:
+#     commands:
+#       - echo "========================================"
+#       - echo "Running Syntax Validation"
+#       - echo "========================================"
+
+#       - python -m py_compile lambda/fetch_lambda/lambda_function.py
+#       - python -m py_compile lambda/etl_lambda/lambda_function.py
+
+#   build:
+#     commands:
+#       - echo "========================================"
+#       - echo "Starting Deployment"
+#       - echo "========================================"
+
+#       - python scripts/deploy.py
+
+#   post_build:
+#     commands:
+#       - echo "========================================"
+#       - echo "Build & Deployment Completed"
+#       - echo "========================================"
+
+# artifacts:
+#   files:
+#     - '**/*'
+
 version: 0.2
 
 phases:
@@ -13,27 +47,14 @@ phases:
 
   build:
     commands:
-      - echo "Creating deployment packages..."
-
-      - cd lambda/fetch_lambda
-      - zip -r ../../fetch_lambda.zip .
-      - cd ../..
-
-      - cd lambda/etl_lambda
-      - zip -r ../../etl_lambda.zip .
-      - cd ../..
+      - echo "Starting deployment..."
+      - chmod +x scripts/deploy.sh
+      - ./scripts/deploy.sh
 
   post_build:
     commands:
-      - echo "Deploying Fetch Lambda..."
-      - aws lambda update-function-code --function-name earthquake-fetch-lambda --zip-file fileb://fetch_lambda.zip
-
-      - echo "Deploying ETL Lambda..."
-      - aws lambda update-function-code --function-name earthquake-etl-lambda --zip-file fileb://etl_lambda.zip
-
-      - echo "Deployment completed."
+      - echo "Build completed successfully."
 
 artifacts:
   files:
-    - fetch_lambda.zip
-    - etl_lambda.zip
+    - '**/*'
