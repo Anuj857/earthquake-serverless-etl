@@ -171,7 +171,7 @@ Load cleaned records into Amazon DynamoDB.
 ### Table
 
 ```
-earthquake_events
+earthquake_records
 ```
 
 Partition Key
@@ -255,6 +255,12 @@ Lambda Deployment
 ## AWS CodePipeline
 
 ![Pipeline](docs/06_CodePipeline.png)
+
+---
+
+## AWS CloudWatch Logs
+
+![Pipeline](docs/07_CloudWatch_logs.png)
 
 ---
 
